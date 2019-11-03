@@ -6,39 +6,51 @@ const xObject = JSON.parse(x);
 
 const hashMap = xObject || [
   {
-    logo: "img/掘金.png",
-    logoType: "image",
-    name: "掘金",
+    logo: "J",
     url: "https://juejin.im"
   },
   {
-    logo: "img/overflow.png",
-    logoType: "image",
-    name: "Stack Overflow",
+    logo: "S",
     url: "http://stackoverflow.com"
   },
   {
-    logo: "img/github.png",
-    logoType: "image",
-    name: "GitHub",
+    logo: "G",
     url: "http://github.com"
   }
 ];
 
+const simplifyUrl = url => {
+  return url
+    .replace("https://", "")
+    .replace("http://", "")
+    .replace("www.", "")
+    .replace(/\/.*/, "");
+};
+
 const render = () => {
   $siteList.find("li:not(.last)").remove();
-  hashMap.forEach(node => {
+  hashMap.forEach((node, index) => {
     const $li = $(`
-    <li>
-      <a href="${node.url}" target="_blank">
+    <li>   
         <div class="site">
-          <div class="logo"><img src='/${node.logo}' alt='${
-      node.name[0]
-    }'></div>
-          <div class="name">${node.name}</div>
+          <div class="logo">${node.logo}</div>
+          <div class="link">${simplifyUrl(node.url)}</div>
+          <div class="close">
+            <svg class="icon">
+              <use xlink:href="#icon-delete"></use>
+            </svg>
+          </div>
         </div>
-      </a>
     </li>`).insertBefore($lastLi);
+    $li.on("click", () => {
+      window.open(node.url);
+    });
+    $li.on("click", ".close", e => {
+      e.stopPropagation();
+
+      hashMap.splice(index, 1);
+      render();
+    });
   });
 };
 
@@ -49,7 +61,10 @@ $(".addButton").on("click", () => {
   if (url.indexOf("http") !== 0) {
     url = "https://" + url;
   }
-  hashMap.push({ logo: url[8], logoType: "text", name: url, url: url });
+  hashMap.push({
+    logo: simplifyUrl(url)[0].toUpperCase(),
+    url: url
+  });
   render();
 });
 
@@ -57,3 +72,12 @@ window.onbeforeunload = () => {
   const string = JSON.stringify(hashMap);
   window.localStorage.setItem("x", string);
 };
+
+$(document).on("keypress", e => {
+  const { key } = e;
+  for (let i = 0; i < hashMap.length; i++) {
+    if (hashMap[i].logo.toLowerCase() === key) {
+      window.open(hashMap[i].url);
+    }
+  }
+});
