@@ -1,5 +1,14 @@
 {
+  "scripts": {
+    "build": "parcel build src/index.html --no-minify --public-url ./"
+  },
   "devDependencies": {
     "cssnano": "^4.1.10"
-  }
+  },
+  "name": "前端学习导航",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:sumucheng/nav-demo.git",
+  "author": "kiki <772765729@qq.com>",
+  "license": "MIT"
 }
